@@ -1,0 +1,495 @@
+/* Reset e base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  /* Previne problemas de scroll no mobile */
+  position: relative;
+  width: 100%;
+  -webkit-tap-highlight-color: transparent; /* Remove highlight azul no Android */
+}
+
+/* Cores do tema */
+:root {
+  --coral-light: #FFD5C8;
+  --coral-medium: #FFB5A0;
+  --coral-dark: #FF8B7A;
+  --sage-light: #C8E6D5;
+  --sage-medium: #8BA899;
+  --sage-dark: #6B9A87;
+  --background: #FFF5F2;
+  --text: #5A5A5A;
+  --white: #FFFFFF;
+  --yellow: #FFD54F;
+  --yellow-dark: #FFC107;
+  --red-light: #EF9A9A;
+  --red-dark: #E57373;
+  --green-light: #A5D6A7;
+  --green-dark: #81C784;
+  --whatsapp: #25D366;
+}
+
+/* Container principal */
+.container {
+  min-height: 100vh;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, var(--coral-light) 0%, var(--background) 50%, var(--sage-light) 100%);
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.animate-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Cards */
+.card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border-radius: 2rem;
+  padding: 1.5rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.card-solid {
+  background: var(--white);
+  border-radius: 1.5rem;
+  padding: 1rem;
+}
+
+/* Botões */
+.btn {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: 9999px;
+  font-size: 1.125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  /* Touch improvements */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  min-height: 56px; /* padrão Material Design para botões touch */
+}
+
+.btn:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, var(--coral-medium) 0%, var(--coral-dark) 100%);
+  color: var(--white);
+  box-shadow: 0 4px 16px rgba(255, 139, 122, 0.3);
+}
+
+.btn-whatsapp {
+  background: var(--whatsapp);
+  color: var(--white);
+  box-shadow: 0 4px 16px rgba(37, 211, 102, 0.3);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--sage-medium);
+  border: 2px solid transparent;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.btn-copy {
+  background: var(--coral-medium);
+  color: var(--white);
+  padding: 0.75rem;
+  border-radius: 1rem;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.btn-copy:hover {
+  transform: scale(1.1);
+}
+
+/* Inputs */
+.input {
+  width: 100%;
+  padding: 0.875rem 1.25rem;
+  border: 2px solid var(--coral-medium);
+  border-radius: 9999px;
+  outline: none;
+  font-size: 1rem;
+  background: var(--white);
+  transition: border-color 0.3s ease;
+}
+
+.input:focus {
+  border-color: var(--coral-dark);
+}
+
+.input-sage {
+  border-color: var(--sage-medium);
+}
+
+.input-sage:focus {
+  border-color: var(--sage-dark);
+}
+
+/* Grid de números */
+.numbers-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+}
+
+.number-btn {
+  padding: 0.75rem;
+  border: none;
+  border-radius: 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  color: var(--white);
+}
+
+.number-btn:hover:not(:disabled) {
+  transform: scale(1.1);
+}
+
+.number-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.number-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.number-btn:disabled:hover {
+  transform: none;
+}
+
+.number-free {
+  background: linear-gradient(135deg, var(--green-light) 0%, var(--green-dark) 100%);
+}
+
+.number-selected {
+  background: linear-gradient(135deg, var(--yellow) 0%, var(--yellow-dark) 100%);
+}
+
+.number-unavailable {
+  background: linear-gradient(135deg, var(--red-light) 0%, var(--red-dark) 100%);
+}
+
+/* Timer e info */
+.timer-bar {
+  background: linear-gradient(90deg, var(--sage-medium) 0%, #A5C4B5 100%);
+  color: var(--white);
+  padding: 1rem;
+  border-radius: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 12px rgba(139, 168, 153, 0.3);
+}
+
+.info-box {
+  background: var(--sage-medium);
+  color: var(--white);
+  padding: 1rem;
+  border-radius: 1.5rem;
+  text-align: center;
+}
+
+/* Alert de erro */
+.alert-error {
+  background: #ffebee;
+  border: 2px solid #ef5350;
+  color: #c62828;
+  padding: 1rem;
+  border-radius: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Sticky elements */
+.sticky {
+  position: sticky;
+  top: 1rem;
+  z-index: 10;
+}
+
+.fixed-bottom {
+  position: fixed;
+  bottom: 1rem;
+  left: 1rem;
+  right: 1rem;
+  max-width: 48rem;
+  margin: 0 auto;
+}
+
+/* Text utilities */
+.text-center {
+  text-align: center;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+}
+
+.text-3xl {
+  font-size: 1.875rem;
+}
+
+.text-4xl {
+  font-size: 2.25rem;
+}
+
+/* Spacing utilities */
+.space-y-2 > * + * {
+  margin-top: 0.5rem;
+}
+
+.space-y-3 > * + * {
+  margin-top: 0.75rem;
+}
+
+.space-y-4 > * + * {
+  margin-top: 1rem;
+}
+
+.space-y-6 > * + * {
+  margin-top: 1.5rem;
+}
+
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-3 { margin-bottom: 0.75rem; }
+.mb-4 { margin-bottom: 1rem; }
+.mb-6 { margin-bottom: 1.5rem; }
+.mt-2 { margin-top: 0.5rem; }
+.mt-4 { margin-top: 1rem; }
+
+/* Layout utilities */
+.flex {
+  display: flex;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.max-w-md {
+  max-width: 28rem;
+}
+
+.max-w-2xl {
+  max-width: 42rem;
+}
+
+.w-full {
+  width: 100%;
+}
+
+/* Code style */
+code {
+  font-family: 'Courier New', monospace;
+  background: var(--background);
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--text);
+  overflow-x: auto;
+  display: block;
+}
+
+/* Icon sizing */
+.icon-sm { width: 1.25rem; height: 1.25rem; }
+.icon-md { width: 1.5rem; height: 1.5rem; }
+.icon-lg { width: 2rem; height: 2rem; }
+.icon-xl { width: 4rem; height: 4rem; }
+
+/* Responsive - Mobile First */
+@media (max-width: 640px) {
+  .container {
+    padding: 0.75rem;
+  }
+  
+  /* Grid de números - 5 colunas sempre */
+  .numbers-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.375rem;
+  }
+  
+  .number-btn {
+    padding: 0.75rem 0.5rem; /* mais área de toque */
+    font-size: 0.875rem;
+    min-height: 44px; /* padrão touch Apple */
+  }
+  
+  /* Títulos menores */
+  .text-4xl {
+    font-size: 2rem;
+  }
+  
+  .text-3xl {
+    font-size: 1.625rem;
+  }
+  
+  .text-2xl {
+    font-size: 1.375rem;
+  }
+  
+  /* Cards com menos padding */
+  .card {
+    padding: 1.25rem;
+  }
+  
+  /* Botão fixo com mais espaço embaixo */
+  .fixed-bottom {
+    bottom: 0.75rem;
+    left: 0.75rem;
+    right: 0.75rem;
+  }
+  
+  /* Input fields maiores para facilitar digitação */
+  .input {
+    padding: 1rem 1.25rem;
+    font-size: 1rem; /* previne zoom automático no iOS */
+  }
+  
+  /* Timer bar mais compacto */
+  .timer-bar {
+    padding: 0.875rem;
+    font-size: 0.875rem;
+  }
+  
+  /* Info box compacto */
+  .info-box {
+    padding: 0.875rem;
+  }
+  
+  /* Code block com scroll horizontal suave */
+  code {
+    font-size: 0.75rem;
+    padding: 0.625rem;
+    max-width: 100%;
+  }
+}
+
+/* Extra small devices (iPhone SE, etc) */
+@media (max-width: 375px) {
+  .numbers-grid {
+    gap: 0.25rem;
+  }
+  
+  .number-btn {
+    padding: 0.625rem 0.375rem;
+    font-size: 0.8125rem;
+  }
+  
+  .text-4xl {
+    font-size: 1.75rem;
+  }
+  
+  .card {
+    padding: 1rem;
+  }
+}
+
+/* Landscape mobile - ajusta grid */
+@media (max-width: 896px) and (orientation: landscape) {
+  .numbers-grid {
+    grid-template-columns: repeat(10, 1fr); /* 10 colunas no landscape */
+  }
+  
+  .container {
+    padding: 0.5rem;
+  }
+}
+
+/* Padding bottom for fixed button */
+.pb-24 {
+  padding-bottom: 6rem;
+}

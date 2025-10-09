@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Painel Admin - Rifa da Denize</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body { font-family: Arial, sans-serif; background: #fafafa; padding: 2rem; }
+    h1 { text-align: center; color: #333; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 2rem; }
+    th, td { border: 1px solid #ccc; padding: 0.75rem; }
+    th { background: #f0f0f0; }
+    input, button { padding: 0.75rem; font-size: 1rem; margin-right: 0.5rem; }
+    .winner-box { padding: 1rem; background: #e0ffe0; border: 2px solid #4caf50; margin-top: 1rem; }
+    .no-winner { padding: 1rem; background: #ffe0e0; border: 2px solid #f44336; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>Painel da Rifa da Denize</h1>
+
+  <div>
+    <label for="sorteado"><strong>Número sorteado:</strong></label><br />
+    <input type="number" id="sorteado" placeholder="Digite o número sorteado..." />
+    <button onclick="buscarVencedor()">Buscar vencedor 🎯</button>
+    <div id="resultadoVencedor"></div>
+  </div>
+
+  <hr style="margin: 2rem 0;">
+
+  <h2>Participantes e Números</h2>
+  <div id="tabelaReservas">Carregando...</div>
+
+  <script type="module">
+    const supabaseUrl = 'https://kkxypfqqndnexpzpkgch.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtreHlwZnFxbmRuZXhwenBrZ2NoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5MDM3NDgsImV4cCI6MjA3NTQ3OTc0OH0.hpUzqjo2F022omCsXCx8f0NwOtGnE_zr46xNdhMGr34';
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+    let todasReservas = [];
+
+    async function carregarDados() {
+      const { data: reservas, error: err1 } = await supabase
+        .from('reservas')
+        .select('*')
+        .eq('status', 'confirmado');
+
+      if (err1) {
+        document.getElementById('tabelaReservas').innerText = 'Erro ao carregar reservas.';
+        console.error(err1);
+        return;
+      }
+
+      const { data: nc, error: err2 } = await supabase
+        .from('numeros_comprados')
+        .select('*');
+
+      if (err2) {
+        console.error('Erro ao obter numeros_comprados:', err2);
+      }
+
+      todasReservas = reservas.map((res) => {
+        const comprados = nc.filter(n => n.reserva_id === res.id);
+        return {
+          ...res,
+          numeros_exibidos: comprados
+        };
+      });
+
+      const linhas = todasReservas.map(res => {
+        const linhasNum = res.numeros_exibidos
+          .map(n => `${n.numero}: "${n.nome_exibido}"`)
+          .join('<br>');
+        return `
+          <tr>
+            <td>${res.nome}</td>
+            <td>${res.whatsapp || '-'}</td>
+            <td>${linhasNum}</td>
+          </tr>
+        `;
+      }).join('');
+
+      document.getElementById('tabelaReservas').innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Nome comprador</th>
+              <th>WhatsApp</th>
+              <th>Números com nomes personalizados</th>
+            </tr>
+          </thead>
+          <tbody>${linhas}</tbody>
+        </table>
+      `;
+    }
+
+    function buscarVencedor() {
+      const numSorteado = parseInt(document.getElementById('sorteado').value.trim());
+      const resultadoDiv = document.getElementById('resultadoVencedor');
+      resultadoDiv.innerHTML = '';
+
+      if (isNaN(numSorteado)) {
+        resultadoDiv.innerHTML = '<div class="no-winner">Digite um número válido!</div>';
+        return;
+      }
+
+      for (const res of todasReservas) {
+        const encontrado = res.numeros_exibidos.find(n => n.numero === numSorteado);
+        if (encontrado) {
+          resultadoDiv.innerHTML = `
+            <div class="winner-box">
+              🎉 <strong>Vencedor do número ${numSorteado}:</strong><br>
+              ✨ Nome no bilhete: ${encontrado.nome_exibido} <br>
+              👤 Comprador: ${res.nome} <br>
+              📞 WhatsApp: ${res.whatsapp || 'não informado'}
+            </div>
+          `;
+          return;
+        }
+      }
+
+      resultadoDiv.innerHTML = `<div class="no-winner">Ninguém comprou o número ${numSorteado}</div>`;
+    }
+
+    carregarDados();
+  </script>
+</body>
+</html>
