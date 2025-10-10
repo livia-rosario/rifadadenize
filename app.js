@@ -250,44 +250,50 @@ function RifaDenize() {
     alert('Chave Pix copiada!');
   };
 
-  const abrirWhatsApp = async () => {
-    const total = numerosSelecionados.length * (config?.valor_numero || 10);
+ const abrirWhatsApp = async () => {
+  const total = numerosSelecionados.length * (config?.valor_numero || 10);
+
+  try {
+    await supabaseClient
+      .from('reservas')
+      .update({ status: 'confirmado' })
+      .eq('id', reservaId);
+
+    await supabaseClient
+      .from('numeros')
+      .update({ status: 'pago' })
+      .in('id', numerosSelecionados);
+
+    const inserts = numerosSelecionados.map(n => ({
+      reserva_id: reservaId,
+      numero: n,
+      nome_exibido: nomesPorNumero[n]?.trim() || nome
+    }));
+
+    await supabaseClient.from('numeros_comprados').insert(inserts);
+
+    let mensagemNumeros = '';
+    numerosSelecionados.forEach(n => {
+      const nomeExibido = nomesPorNumero[n]?.trim() || nome;
+      mensagemNumeros += `\n  • ${n}: ${nomeExibido}`;
+    });
+
+    const mensagem = `Olá! Confirmei minha reserva na rifa:\n\n👤 Comprador: ${nome}\n🎯 Números:${mensagemNumeros}\n💰 Total: R$ ${total.toFixed(2)}\n\nVou enviar o comprovante do Pix!`;
+    const url = `https://wa.me/55${config?.whatsapp_admin}?text=${encodeURIComponent(mensagem)}`;
     
-    try {
-      await supabaseClient
-        .from('reservas')
-        .update({ status: 'confirmado' })
-        .eq('id', reservaId);
+    console.log('🔗 URL do WhatsApp:', url);
+    alert(`Link gerado: ${url}`);
 
-      await supabaseClient
-        .from('numeros')
-        .update({ status: 'pago' })
-        .in('id', numerosSelecionados);
+    // troquei window.open por:
+    window.location.href = url;
 
-      const inserts = numerosSelecionados.map(n => ({
-        reserva_id: reservaId,
-        numero: n,
-        nome_exibido: nomesPorNumero[n]?.trim() || nome
-      }));
+  } catch (error) {
+    console.error('Erro ao enviar comprovante:', error);
+    alert('Sua reserva foi salva! Se o WhatsApp não abrir automaticamente, envie o comprovante manualmente.');
 
-      await supabaseClient.from('numeros_comprados').insert(inserts);
+  }
+};
 
-      let mensagemNumeros = '';
-      numerosSelecionados.forEach(n => {
-        const nomeExibido = nomesPorNumero[n]?.trim() || nome;
-        mensagemNumeros += `\n  • ${n}: ${nomeExibido}`;
-      });
-
-      const mensagem = `Olá! Confirmei minha reserva na rifa:\n\n👤 Comprador: ${nome}\n🎯 Números:${mensagemNumeros}\n💰 Total: R$ ${total.toFixed(2)}\n\nVou enviar o comprovante do Pix!`;
-      const url = `https://wa.me/55${config?.whatsapp_admin}?text=${encodeURIComponent(mensagem)}`;
-      window.open(url, '_blank');
-      
-      console.log('✅ Reserva confirmada automaticamente!');
-    } catch (error) {
-      console.error('Erro ao confirmar:', error);
-      alert('Erro ao confirmar reserva. Tente novamente!');
-    }
-  };
 
   const formatarTempo = (segundos) => {
     const min = Math.floor(segundos / 60);
