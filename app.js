@@ -250,10 +250,16 @@ function RifaDenize() {
     alert('Chave Pix copiada!');
   };
 
- const abrirWhatsApp = async () => {
+ let envioWhatsAppEmAndamento = false; // <- adicione essa variável no topo do arquivo (fora da função)
+
+const abrirWhatsApp = async () => {
+  if (envioWhatsAppEmAndamento) return; // evita duplicar
+  envioWhatsAppEmAndamento = true;
+
   const total = numerosSelecionados.length * (config?.valor_numero || 10);
 
   try {
+    // Atualiza status da reserva e dos números
     await supabaseClient
       .from('reservas')
       .update({ status: 'confirmado' })
@@ -264,14 +270,26 @@ function RifaDenize() {
       .update({ status: 'pago' })
       .in('id', numerosSelecionados);
 
-    const inserts = numerosSelecionados.map(n => ({
-      reserva_id: reservaId,
-      numero: n,
-      nome_exibido: nomesPorNumero[n]?.trim() || nome
-    }));
+    // ✅ Antes de inserir, verifica se já existem registros iguais
+    const { data: existentes } = await supabaseClient
+      .from('numeros_comprados')
+      .select('numero')
+      .eq('reserva_id', reservaId);
 
-    await supabaseClient.from('numeros_comprados').insert(inserts);
+    const numerosExistentes = existentes?.map(e => e.numero) || [];
+    const novosInserts = numerosSelecionados
+      .filter(n => !numerosExistentes.includes(n))
+      .map(n => ({
+        reserva_id: reservaId,
+        numero: n,
+        nome_exibido: nomesPorNumero[n]?.trim() || nome
+      }));
 
+    if (novosInserts.length > 0) {
+      await supabaseClient.from('numeros_comprados').insert(novosInserts);
+    }
+
+    // Monta a mensagem do WhatsApp
     let mensagemNumeros = '';
     numerosSelecionados.forEach(n => {
       const nomeExibido = nomesPorNumero[n]?.trim() || nome;
@@ -280,19 +298,18 @@ function RifaDenize() {
 
     const mensagem = `Olá! Confirmei minha reserva na rifa:\n\n👤 Comprador: ${nome}\n🎯 Números:${mensagemNumeros}\n💰 Total: R$ ${total.toFixed(2)}\n\nVou enviar o comprovante do Pix!`;
     const url = `https://wa.me/55${config?.whatsapp_admin}?text=${encodeURIComponent(mensagem)}`;
-    
-    console.log('🔗 URL do WhatsApp:', url);
-    alert(`Link gerado: ${url}`);
 
-    // troquei window.open por:
+    console.log('🔗 URL do WhatsApp:', url);
     window.location.href = url;
 
   } catch (error) {
     console.error('Erro ao enviar comprovante:', error);
     alert('Sua reserva foi salva! Se o WhatsApp não abrir automaticamente, envie o comprovante manualmente.');
-
+  } finally {
+    envioWhatsAppEmAndamento = false;
   }
 };
+
 
 
   const formatarTempo = (segundos) => {
