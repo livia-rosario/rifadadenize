@@ -6,31 +6,14 @@
   <title>Painel Admin - Rifa da Denize</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="style.css"> <!-- Incluindo o style.css atualizado -->
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    /* Estilos específicos para o Admin, aproveitando as novas classes do style.css */
     body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #FFD5C8 0%, #FFF5F2 50%, #C8E6D5 100%);
+      background: var(--background); /* Usando a variável de fundo */
       min-height: 100vh;
       padding: 2rem;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    h1 {
-      text-align: center;
-      color: #5A5A5A;
-      font-size: 2.5rem;
-      margin-bottom: 2rem;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
     }
 
     .stats {
@@ -40,44 +23,6 @@
       margin-bottom: 2rem;
     }
 
-    .stat-card {
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(10px);
-      padding: 1.5rem;
-      border-radius: 1.5rem;
-      text-align: center;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-    }
-
-    .stat-number {
-      font-size: 2.5rem;
-      font-weight: bold;
-      color: #FF8B7A;
-      margin-bottom: 0.5rem;
-    }
-
-    .stat-label {
-      color: #8BA899;
-      font-weight: 600;
-    }
-
-    .sorteio-box {
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(10px);
-      padding: 2rem;
-      border-radius: 2rem;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-      margin-bottom: 2rem;
-    }
-
-    .sorteio-box h2 {
-      color: #5A5A5A;
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
     .input-group {
       display: flex;
       gap: 1rem;
@@ -85,11 +30,12 @@
       flex-wrap: wrap;
     }
 
-    input[type="number"] {
+    /* Ajuste para o input de número no admin */
+    .input-group input[type="number"] {
       flex: 1;
       min-width: 200px;
       padding: 1rem 1.5rem;
-      border: 2px solid #FFB5A0;
+      border: 2px solid var(--coral-medium);
       border-radius: 9999px;
       font-size: 1.125rem;
       font-family: 'Poppins', sans-serif;
@@ -97,100 +43,12 @@
       transition: all 0.3s;
     }
 
-    input[type="number"]:focus {
-      border-color: #FF8B7A;
+    .input-group input[type="number"]:focus {
+      border-color: var(--coral-dark);
       box-shadow: 0 0 0 3px rgba(255, 139, 122, 0.2);
     }
 
-    .btn {
-      padding: 1rem 2rem;
-      border: none;
-      border-radius: 9999px;
-      font-size: 1.125rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-      font-family: 'Poppins', sans-serif;
-    }
-
-    .btn-primary {
-      background: linear-gradient(90deg, #FFB5A0 0%, #FF8B7A 100%);
-      color: white;
-      box-shadow: 0 4px 16px rgba(255, 139, 122, 0.3);
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(255, 139, 122, 0.4);
-    }
-
-    .winner-box {
-      background: linear-gradient(135deg, #A5D6A7 0%, #81C784 100%);
-      color: white;
-      padding: 2rem;
-      border-radius: 1.5rem;
-      margin-top: 1rem;
-      box-shadow: 0 4px 16px rgba(129, 199, 132, 0.3);
-      animation: slideIn 0.5s ease-out;
-    }
-
-    .winner-box h3 {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .winner-info {
-      background: rgba(255, 255, 255, 0.3);
-      padding: 1rem;
-      border-radius: 1rem;
-      margin-top: 1rem;
-    }
-
-    .winner-info p {
-      margin: 0.5rem 0;
-      font-size: 1.125rem;
-    }
-
-    .no-winner {
-      background: linear-gradient(135deg, #EF9A9A 0%, #E57373 100%);
-      color: white;
-      padding: 1.5rem;
-      border-radius: 1.5rem;
-      margin-top: 1rem;
-      text-align: center;
-      font-weight: 600;
-      animation: shake 0.5s ease-out;
-    }
-
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-10px); }
-      75% { transform: translateX(10px); }
-    }
-
-    .table-container {
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(10px);
-      padding: 2rem;
-      border-radius: 2rem;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-      overflow-x: auto;
-    }
-
+    /* Estilos de tabela */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -202,43 +60,10 @@
       border-bottom: 1px solid rgba(90, 90, 90, 0.1);
     }
 
-    th {
-      background: linear-gradient(90deg, #FFB5A0 0%, #FF8B7A 100%);
-      color: white;
-      font-weight: 600;
-      position: sticky;
-      top: 0;
-    }
-
-    tr:hover {
-      background: rgba(255, 181, 160, 0.1);
-    }
-
-    .numero-tag {
-      display: inline-block;
-      background: linear-gradient(135deg, #FFD54F 0%, #FFC107 100%);
-      color: #5A5A5A;
-      padding: 0.25rem 0.75rem;
-      border-radius: 9999px;
-      font-weight: 600;
-      margin: 0.25rem;
-      font-size: 0.875rem;
-    }
-
-    .loading {
-      text-align: center;
-      padding: 3rem;
-      color: #8BA899;
-      font-size: 1.25rem;
-    }
-
+    /* Media Queries para responsividade */
     @media (max-width: 768px) {
       body {
         padding: 1rem;
-      }
-
-      h1 {
-        font-size: 1.75rem;
       }
 
       .stats {
@@ -249,12 +74,8 @@
         flex-direction: column;
       }
 
-      input[type="number"], .btn {
+      .input-group input[type="number"], .btn {
         width: 100%;
-      }
-
-      .table-container {
-        padding: 1rem;
       }
 
       th, td {
@@ -265,31 +86,31 @@
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🎯 Painel da Rifa da Denize</h1>
+  <div class="admin-container">
+    <h1 class="admin-h1">🎯 Painel da Rifa da Denize</h1>
 
     <!-- Estatísticas -->
     <div class="stats" id="stats">
-      <div class="stat-card">
-        <div class="stat-number" id="totalVendidos">-</div>
-        <div class="stat-label">Números vendidos</div>
+      <div class="admin-stat-card">
+        <div class="admin-stat-number" id="totalVendidos">-</div>
+        <div class="admin-stat-label">Números vendidos</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-number" id="totalParticipantes">-</div>
-        <div class="stat-label">Participantes</div>
+      <div class="admin-stat-card">
+        <div class="admin-stat-number" id="totalParticipantes">-</div>
+        <div class="admin-stat-label">Participantes</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-number" id="totalArrecadado">R$ -</div>
-        <div class="stat-label">Arrecadado</div>
+      <div class="admin-stat-card">
+        <div class="admin-stat-number" id="totalArrecadado">R$ -</div>
+        <div class="admin-stat-label">Arrecadado</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-number" id="disponiveis">-</div>
-        <div class="stat-label">Disponíveis</div>
+      <div class="admin-stat-card">
+        <div class="admin-stat-number" id="disponiveis">-</div>
+        <div class="admin-stat-label">Disponíveis</div>
       </div>
     </div>
 
     <!-- Box de Sorteio -->
-    <div class="sorteio-box">
+    <div class="admin-sorteio-box">
       <h2>🎲 Realizar Sorteio</h2>
       <div class="input-group">
         <input type="number" id="sorteado" placeholder="Digite o número sorteado (1-100)..." min="1" max="100" />
@@ -299,13 +120,14 @@
     </div>
 
     <!-- Tabela de Participantes -->
-    <div class="table-container">
-      <h2 style="color: #5A5A5A; margin-bottom: 1.5rem;">👥 Participantes e Números</h2>
+    <div class="admin-table-container">
+      <h2 style="color: var(--text); margin-bottom: 1.5rem;">👥 Participantes e Números</h2>
       <div id="tabelaReservas" class="loading">Carregando dados...</div>
     </div>
   </div>
 
   <script type="module">
+    // ... (Lógica JavaScript original mantida)
     const supabaseUrl = 'https://kkxypfqqndnexpzpkgch.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtreHlwZnFxbmRuZXhwenBrZ2NoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5MDM3NDgsImV4cCI6MjA3NTQ3OTc0OH0.hpUzqjo2F022omCsXCx8f0NwOtGnE_zr46xNdhMGr34';
     const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
@@ -376,8 +198,9 @@
     }
 
     function renderizarTabela() {
+      const tabelaReservasDiv = document.getElementById('tabelaReservas');
       if (todasReservas.length === 0) {
-        document.getElementById('tabelaReservas').innerHTML = '<p style="color: #8BA899; text-align: center;">Nenhuma reserva confirmada ainda.</p>';
+        tabelaReservasDiv.innerHTML = '<p style="color: var(--sage-medium); text-align: center;">Nenhuma reserva confirmada ainda.</p>';
         return;
       }
 
@@ -392,16 +215,16 @@
 
         return `
           <tr>
-            <td style="font-weight: 600; color: #5A5A5A;">${res.nome}</td>
-            <td style="color: #8BA899;">${res.whatsapp || '-'}</td>
+            <td style="font-weight: 600; color: var(--text);">${res.nome}</td>
+            <td style="color: var(--sage-medium);">${res.whatsapp || '-'}</td>
             <td>${numerosHtml}</td>
-            <td style="font-size: 0.875rem; color: #5A5A5A;">${nomesDetalhados}</td>
+            <td style="font-size: 0.875rem; color: var(--text);">${nomesDetalhados}</td>
           </tr>
         `;
       }).join('');
 
-      document.getElementById('tabelaReservas').innerHTML = `
-        <table>
+      tabelaReservasDiv.innerHTML = `
+        <table class="admin-table">
           <thead>
             <tr>
               <th>Comprador</th>
@@ -421,7 +244,7 @@
       resultadoDiv.innerHTML = '';
 
       if (isNaN(numSorteado) || numSorteado < 1 || numSorteado > 100) {
-        resultadoDiv.innerHTML = '<div class="no-winner">Digite um número válido entre 1 e 100!</div>';
+        resultadoDiv.innerHTML = '<div class="admin-no-winner">Digite um número válido entre 1 e 100!</div>';
         return;
       }
 
@@ -429,7 +252,7 @@
         const encontrado = res.numeros_exibidos.find(n => n.numero === numSorteado);
         if (encontrado) {
           resultadoDiv.innerHTML = `
-            <div class="winner-box">
+            <div class="admin-winner-box">
               <h3>🎉 Temos um vencedor!</h3>
               <div class="winner-info">
                 <p><strong>🎯 Número sorteado:</strong> ${numSorteado}</p>
@@ -443,7 +266,7 @@
         }
       }
 
-      resultadoDiv.innerHTML = `<div class="no-winner">😔 Ninguém comprou o número ${numSorteado}</div>`;
+      resultadoDiv.innerHTML = `<div class="admin-no-winner">😔 Ninguém comprou o número ${numSorteado}</div>`;
     }
 
     // Carrega dados ao iniciar

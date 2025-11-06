@@ -334,24 +334,21 @@ const abrirWhatsApp = async () => {
     return (
       <div className="container flex items-center justify-center">
         <div className="text-center space-y-6 max-w-md animate-fade-in">
-          <img src="avatar.png" alt="Denize" style={{
-            width: '96px', height: '96px', borderRadius: '50%', objectFit: 'cover', margin: '0 auto',
-            boxShadow: '0 4px 16px rgba(0,0,0,0.1)'
-          }} />
-          <h1 className="text-4xl" style={{fontWeight: 'bold', color: '#5A5A5A'}}>Rifa da Denize</h1>
+          <img src="avatar.png" alt="Denize" className="avatar-img" />
+          <h1 className="text-4xl text-primary-dark">Rifa da Denize</h1>
           <div className="card">
 
-            <p className="text-2xl mb-2" style={{fontWeight: '600', color: '#5A5A5A'}}>
-              {config?.premio || 'Carregando...'}
+            <p className="text-2xl mb-2 text-primary-dark font-semibold">
+             Kit de Beleza Premium
             </p>
-            <p className="text-lg" style={{color: '#8BA899'}}>
-              R$ {config?.valor_numero?.toFixed(2) || '10.00'} por número
+            <p className="text-lg text-secondary-medium">
+              R$10.00 por número
             </p>
           </div>
           <button onClick={() => setEtapa('selecao')} className="btn btn-primary">
             Escolher meus números ✨
           </button>
-          <p className="text-sm mt-2" style={{ color: '#5A5A5A' }}>
+          <p className="text-sm mt-2 text-primary-dark">
             📅 Sorteio: {config?.data_sorteio ? new Date(config.data_sorteio).toLocaleDateString('pt-BR') : '12/12/2025'} às 17h
           </p>
         </div>
@@ -365,7 +362,7 @@ const abrirWhatsApp = async () => {
       <div className="container pb-24">
         <div className="max-w-2xl mx-auto space-y-6">
           <div className="card sticky">
-            <h2 className="text-2xl mb-4" style={{fontWeight: 'bold', color: '#5A5A5A'}}>Seus dados</h2>
+            <h2 className="text-2xl mb-4 text-primary-dark font-bold">Seus dados</h2>
             <input
               type="text"
               placeholder="Seu nome (comprador) *"
@@ -386,9 +383,9 @@ const abrirWhatsApp = async () => {
             <div className="timer-bar">
               <div className="flex items-center gap-2">
                 <TimerIcon />
-                <span style={{fontWeight: '600'}}>{formatarTempo(holdTimer)}</span>
+                <span className="font-semibold">{formatarTempo(holdTimer)}</span>
               </div>
-              <span style={{fontWeight: '600'}}>{numerosSelecionados.length} números</span>
+              <span className="font-semibold">{numerosSelecionados.length} números</span>
             </div>
           )}
 
@@ -400,7 +397,7 @@ const abrirWhatsApp = async () => {
           )}
 
           <div className="card">
-            <h3 className="text-xl mb-4" style={{fontWeight: 'bold', color: '#5A5A5A'}}>
+            <h3 className="text-xl mb-4 text-primary-dark font-bold">
               Escolha seus números
             </h3>
             <div className="numbers-grid">
@@ -446,13 +443,13 @@ const abrirWhatsApp = async () => {
       <div className="container pb-24">
         <div className="max-w-2xl mx-auto space-y-6">
           <div className="card text-center">
-            <div style={{color: '#8BA899', marginBottom: '1rem'}}>
+            <div className="text-secondary-medium mb-4">
               <UserIcon />
             </div>
-            <h2 className="text-2xl mb-2" style={{fontWeight: 'bold', color: '#5A5A5A'}}>
+            <h2 className="text-2xl mb-2 text-primary-dark font-bold">
               Quem representa cada número?
             </h2>
-            <p className="text-sm" style={{color: '#8BA899'}}>
+            <p className="text-sm text-secondary-medium">
               Personalize os nomes que vão aparecer nos bilhetes
             </p>
           </div>
@@ -468,55 +465,20 @@ const abrirWhatsApp = async () => {
 
           <button 
             onClick={usarMeuNomeEmTodos}
-            style={{
-              width: '100%',
-              padding: '0.75rem',
-              background: 'rgba(139, 168, 153, 0.2)',
-              border: '2px dashed #8BA899',
-              borderRadius: '1rem',
-              color: '#8BA899',
-              fontWeight: '600',
-              cursor: 'pointer',
-              marginBottom: '1rem'
-            }}
+            className="btn-dashed-secondary mb-4"
           >
             ✨ Usar "{nome}" em todos os números
           </button>
 
           <div className="space-y-4">
             {numerosSelecionados.map(num => (
-              <div key={num} className="card" style={{
-                background: 'linear-gradient(135deg, #FFD54F 0%, #FFC107 100%)',
-                padding: '1.25rem',
-                position: 'relative'
-              }}>
-                <div style={{
-                  position: 'absolute',
-                  top: '1rem',
-                  left: '1rem',
-                  background: 'rgba(255,255,255,0.9)',
-                  width: '48px',
-                  height: '48px',
-                  borderRadius: '12px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '1.5rem',
-                  fontWeight: 'bold',
-                  color: '#5A5A5A',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                }}>
+              <div key={num} className="bilhete-card">
+                <div className="bilhete-numero">
                   {num}
                 </div>
                 
-                <div style={{marginLeft: '64px'}}>
-                  <label style={{
-                    fontSize: '0.875rem',
-                    fontWeight: '600',
-                    color: 'rgba(90,90,90,0.8)',
-                    marginBottom: '0.5rem',
-                    display: 'block'
-                  }}>
+                <div className="bilhete-content">
+                  <label className="bilhete-label">
                     Nome que vai aparecer:
                   </label>
                   <input
@@ -527,12 +489,7 @@ const abrirWhatsApp = async () => {
                     onChange={(e) => handleNomeNumeroChange(num, e.target.value)}
                     style={{background: 'white', border: '2px solid rgba(90,90,90,0.2)'}}
                   />
-                  <div style={{
-                    marginTop: '0.5rem',
-                    fontSize: '0.75rem',
-                    color: 'rgba(90,90,90,0.7)',
-                    fontWeight: '500'
-                  }}>
+                  <div className="bilhete-preview">
                     📝 Vai aparecer: <strong>{nomesPorNumero[num]?.trim() || nome}</strong>
                   </div>
                 </div>
@@ -559,27 +516,27 @@ const abrirWhatsApp = async () => {
       <div className="container flex items-center justify-center">
         <div className="max-w-md w-full space-y-6">
           <div className="card text-center">
-            <div style={{color: '#8BA899', marginBottom: '1rem'}}>
+            <div className="text-secondary-medium mb-4">
               <CheckCircleIcon />
             </div>
-            <h2 className="text-2xl mb-2" style={{fontWeight: 'bold', color: '#5A5A5A'}}>
+            <h2 className="text-2xl mb-2 text-primary-dark font-bold">
               Números reservados!
             </h2>
-            <p className="mb-4" style={{color: '#8BA899'}}>Complete o pagamento via Pix</p>
+            <p className="mb-4 text-secondary-medium">Complete o pagamento via Pix</p>
             
             <div className="info-box mb-4">
               <p className="text-sm mb-2">Seus números:</p>
-              <div style={{fontSize: '0.875rem', marginBottom: '0.75rem'}}>
+              <div className="text-sm mb-3">
                 {numerosSelecionados.map(n => {
                   const nomeExibido = nomesPorNumero[n]?.trim() || nome;
-                  return <div key={n} style={{padding: '0.25rem 0'}}><strong>{n}</strong>: {nomeExibido}</div>;
+                  return <div key={n} className="py-1"><strong>{n}</strong>: {nomeExibido}</div>;
                 })}
               </div>
-              <p className="text-3xl" style={{fontWeight: 'bold'}}>R$ {total.toFixed(2)}</p>
+              <p className="text-3xl font-bold">R$ {total.toFixed(2)}</p>
             </div>
 
             <div className="card-solid mb-4">
-              <p className="text-sm mb-2" style={{color: '#5A5A5A'}}>Chave Pix:</p>
+              <p className="text-sm mb-2 text-primary-dark">Chave Pix:</p>
               <div className="flex items-center gap-2">
                 <code className="flex-1">{config?.pix_chave}</code>
                 <button onClick={copiarChavePix} className="btn-copy">
@@ -603,10 +560,10 @@ const abrirWhatsApp = async () => {
       <div className="container flex items-center justify-center">
         <div className="max-w-md w-full text-center space-y-6">
           <div className="card">
-            <h2 className="text-3xl mb-4" style={{fontWeight: 'bold', color: '#5A5A5A'}}>
+            <h2 className="text-3xl mb-4 text-primary-dark font-bold">
               Quase lá!
             </h2>
-            <p className="mb-6" style={{color: '#8BA899'}}>
+            <p className="mb-6 text-secondary-medium">
               Clique no botão abaixo para enviar o comprovante e <strong>confirmar automaticamente</strong> seus números!
             </p>
             
@@ -621,7 +578,7 @@ const abrirWhatsApp = async () => {
           </div>
 
           <div className="card">
-            <p className="text-sm" style={{color: '#5A5A5A'}}>
+            <p className="text-sm text-primary-dark">
               ✨ <strong>Atenção:</strong> Ao clicar em "Enviar comprovante", seus números serão confirmados automaticamente!
             </p>
           </div>
