@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pendentes de Confirmação - Rifa da Denize</title>
+
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    body {
+      background: var(--background);
+      font-family: 'Poppins', sans-serif;
+      padding: 2rem;
+    }
+    .btn-confirm {
+      background: var(--green-dark);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.75rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .btn-confirm:hover {
+      background: var(--green-light);
+    }
+  </style>
+</head>
+
+<body>
+  <h1 class="admin-h1">⏳ Pendentes de Confirmação</h1>
+
+  <div class="admin-table-container">
+    <div id="tabelaPendentes">Carregando...</div>
+  </div>
+
+<script type="module">
+  const supabaseUrl = 'https://kkxypfqqndnexpzpkgch.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtreHlwZnFxbmRuZXhwenBrZ2NoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5MDM3NDgsImV4cCI6MjA3NTQ3OTc0OH0.hpUzqjo2F022omCsXCx8f0NwOtGnE_zr46xNdhMGr34';
+  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+  async function carregarPendentes() {
+    const { data: reservas } = await supabase
+      .from('reservas')
+      .select('*')
+      .eq('status', 'aguardando')
+      .order('criado_em', { ascending: true });
+
+    const tabela = document.getElementById('tabelaPendentes');
+
+    if (!reservas || reservas.length === 0) {
+      tabela.innerHTML = `<p style="text-align:center;color:var(--sage-medium);">Nenhum pagamento pendente 🎉</p>`;
+      return;
+    }
+
+    const linhas = reservas.map(r => `
+      <tr>
+        <td>${r.nome}</td>
+        <td>${r.whatsapp || '-'}</td>
+        <td>${r.numeros.join(', ')}</td>
+        <td><button class="btn-confirm" onclick="confirmarPagamento('${r.id}')">✅ Confirmar</button></td>
+      </tr>
+    `).join('');
+
+    tabela.innerHTML = `
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>WhatsApp</th>
+            <th>Números</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody>${linhas}</tbody>
+      </table>
+    `;
+  }
+
+  window.confirmarPagamento = async function(reservaId) {
+    // Pega dados da reserva
+    const { data: r } = await supabase
+      .from('reservas')
+      .select('id, nome, numeros')
+      .eq('id', reservaId)
+      .single();
+
+    // 1) Marca como confirmado
+    await supabase
+      .from('reservas')
+      .update({ status: 'confirmado', atualizado_em: new Date().toISOString() })
+      .eq('id', reservaId);
+
+    // 2) Marca números como pagos
+    await supabase
+      .from('numeros')
+      .update({ status: 'pago' })
+      .eq('reserva_id', reservaId);
+
+    // 3) Insere no histórico (admin usa isso)
+    const inserts = r.numeros.map(n => ({
+      reserva_id: r.id,
+      numero: n,
+      nome_exibido: r.nome
+    }));
+
+    await supabase.from('numeros_comprados').insert(inserts);
+
+    alert('✅ Confirmado!');
+    carregarPendentes();
+  };
+
+  carregarPendentes();
+  setInterval(carregarPendentes, 8000);
+</script>
+
+</body>
+</html>
