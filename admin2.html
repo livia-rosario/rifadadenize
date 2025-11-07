@@ -2,119 +2,304 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pendentes de Confirmação - Rifa da Denize</title>
-
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Admin 2 - Confirmação Manual</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
+  <link rel="stylesheet" href="style.css">
   <style>
+    /* Estilos específicos para o Admin, aproveitando as novas classes do style.css */
     body {
-      background: var(--background);
       font-family: 'Poppins', sans-serif;
+      background: var(--background);
+      min-height: 100vh;
       padding: 2rem;
     }
-    .btn-confirm {
-      background: var(--green-dark);
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 0.75rem;
-      cursor: pointer;
-      font-weight: 600;
+
+    .admin-container {
+      max-width: 1200px;
+      margin: 0 auto;
     }
-    .btn-confirm:hover {
-      background: var(--green-light);
+
+    .admin-h1 {
+      text-align: center;
+      color: var(--text);
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .admin-table-container {
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 2rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+      overflow-x: auto;
+    }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .admin-table th, .admin-table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(90, 90, 90, 0.1);
+    }
+
+    .admin-table th {
+      background: linear-gradient(90deg, var(--sage-medium) 0%, var(--sage-dark) 100%);
+      color: white;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+    }
+
+    .admin-table tr:hover {
+      background: var(--sage-light);
+    }
+
+    .numero-tag {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--yellow) 0%, var(--yellow-dark) 100%);
+      color: var(--text);
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-weight: 600;
+      margin: 0.25rem;
+      font-size: 0.875rem;
+    }
+
+    .btn-confirmar {
+      background: linear-gradient(90deg, var(--green-light) 0%, var(--green-dark) 100%);
+      color: white;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 9999px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-confirmar:hover {
+      transform: scale(1.05);
+    }
+
+    .btn-cancelar {
+      background: linear-gradient(90deg, var(--red-light) 0%, var(--red-dark) 100%);
+      color: white;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 9999px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-left: 0.5rem;
+    }
+
+    .btn-cancelar:hover {
+      transform: scale(1.05);
+    }
+
+    .loading {
+      text-align: center;
+      padding: 3rem;
+      color: var(--sage-medium);
+      font-size: 1.25rem;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+
+      .admin-h1 {
+        font-size: 1.75rem;
+      }
+
+      .admin-table-container {
+        padding: 1rem;
+      }
+
+      .admin-table th, .admin-table td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.875rem;
+      }
     }
   </style>
 </head>
-
 <body>
-  <h1 class="admin-h1">⏳ Pendentes de Confirmação</h1>
+  <div class="admin-container">
+    <h1 class="admin-h1">✅ Confirmação Manual de Reservas</h1>
 
-  <div class="admin-table-container">
-    <div id="tabelaPendentes">Carregando...</div>
+    <div class="admin-table-container">
+      <h2 style="color: var(--text); margin-bottom: 1.5rem;">Reservas Aguardando Confirmação (Status: aguardando)</h2>
+      <div id="tabelaReservas" class="loading">Carregando dados...</div>
+    </div>
   </div>
 
-<script type="module">
-  const supabaseUrl = 'https://kkxypfqqndnexpzpkgch.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtreHlwZnFxbmRuZXhwenBrZ2NoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5MDM3NDgsImV4cCI6MjA3NTQ3OTc0OH0.hpUzqjo2F022omCsXCx8f0NwOtGnE_zr46xNdhMGr34';
-  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+  <script type="module">
+    const supabaseUrl = 'https://kkxypfqqndnexpzpkgch.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtreHlwZnFxbmRuZXhwenBrZ2NoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5MDM3NDgsImV4cCI6MjA3NTQ3OTc0OH0.hpUzqjo2F022omCsXCx8f0NwOtGnE_zr46xNdhMGr34';
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-  async function carregarPendentes() {
-    const { data: reservas } = await supabase
-      .from('reservas')
-      .select('*')
-      .eq('status', 'aguardando')
-      .order('criado_em', { ascending: true });
+    let todasReservas = [];
 
-    const tabela = document.getElementById('tabelaPendentes');
+    async function carregarDados() {
+      try {
+        // Carrega reservas que estão no status 'aguardando'
+        const { data: reservas, error: err1 } = await supabaseClient
+          .from('reservas')
+          .select('*')
+          .eq('status', 'aguardando')
+          .order('criado_em', { ascending: false });
 
-    if (!reservas || reservas.length === 0) {
-      tabela.innerHTML = `<p style="text-align:center;color:var(--sage-medium);">Nenhum pagamento pendente 🎉</p>`;
-      return;
+        if (err1) {
+          document.getElementById('tabelaReservas').innerHTML = '<p style="color: var(--red-dark);">Erro ao carregar reservas.</p>';
+          console.error(err1);
+          return;
+        }
+
+        // Carrega todos os números comprados para associar os nomes personalizados
+        const { data: numerosComprados, error: err2 } = await supabaseClient
+          .from('numeros_comprados')
+          .select('*')
+          .order('numero', { ascending: true });
+
+        if (err2) {
+          console.error('Erro ao obter numeros_comprados:', err2);
+        }
+
+        // Associa números às reservas
+        todasReservas = reservas.map((res) => {
+          const comprados = numerosComprados ? numerosComprados.filter(n => n.reserva_id === res.id) : [];
+          return {
+            ...res,
+            numeros_exibidos: comprados
+          };
+        });
+
+        renderizarTabela();
+      } catch (error) {
+        console.error('Erro geral:', error);
+        document.getElementById('tabelaReservas').innerHTML = '<p style="color: var(--red-dark);">Erro ao carregar dados.</p>';
+      }
     }
 
-    const linhas = reservas.map(r => `
-      <tr>
-        <td>${r.nome}</td>
-        <td>${r.whatsapp || '-'}</td>
-        <td>${r.numeros.join(', ')}</td>
-        <td><button class="btn-confirm" onclick="confirmarPagamento('${r.id}')">✅ Confirmar</button></td>
-      </tr>
-    `).join('');
+    function renderizarTabela() {
+      const tabelaReservasDiv = document.getElementById('tabelaReservas');
+      if (todasReservas.length === 0) {
+        tabelaReservasDiv.innerHTML = '<p style="color: var(--sage-medium); text-align: center;">Nenhuma reserva aguardando confirmação.</p>';
+        return;
+      }
 
-    tabela.innerHTML = `
-      <table class="admin-table">
-        <thead>
+      const linhas = todasReservas.map(res => {
+        const numerosHtml = res.numeros_exibidos
+          .map(n => `<span class="numero-tag" title="${n.nome_exibido}">${n.numero}</span>`)
+          .join(' ');
+        
+        const nomesDetalhados = res.numeros_exibidos
+          .map(n => `<div style="margin: 0.25rem 0;"><strong>${n.numero}:</strong> ${n.nome_exibido}</div>`)
+          .join('');
+
+        const total = res.numeros.length * 10; // Assumindo valor padrão de R$10,00
+
+        return `
           <tr>
-            <th>Nome</th>
-            <th>WhatsApp</th>
-            <th>Números</th>
-            <th>Ação</th>
+            <td style="font-weight: 600; color: var(--text);">${res.nome}</td>
+            <td style="color: var(--sage-medium);">${res.whatsapp || '-'}</td>
+            <td>${numerosHtml}</td>
+            <td style="font-size: 0.875rem; color: var(--text);">${nomesDetalhados}</td>
+            <td style="font-weight: 700; color: var(--coral-dark);">R$ ${total.toFixed(2)}</td>
+            <td>
+              <button class="btn-confirmar" onclick="confirmarReserva(${res.id}, [${res.numeros.join(',')}])">Confirmar</button>
+              <button class="btn-cancelar" onclick="cancelarReserva(${res.id}, [${res.numeros.join(',')}])">Cancelar</button>
+            </td>
           </tr>
-        </thead>
-        <tbody>${linhas}</tbody>
-      </table>
-    `;
-  }
+        `;
+      }).join('');
 
-  window.confirmarPagamento = async function(reservaId) {
-    // Pega dados da reserva
-    const { data: r } = await supabase
-      .from('reservas')
-      .select('id, nome, numeros')
-      .eq('id', reservaId)
-      .single();
+      tabelaReservasDiv.innerHTML = `
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Comprador</th>
+              <th>WhatsApp</th>
+              <th>Números</th>
+              <th>Nomes personalizados</th>
+              <th>Total</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>${linhas}</tbody>
+        </table>
+      `;
+    }
 
-    // 1) Marca como confirmado
-    await supabase
-      .from('reservas')
-      .update({ status: 'confirmado', atualizado_em: new Date().toISOString() })
-      .eq('id', reservaId);
+    window.confirmarReserva = async function(reservaId, numeros) {
+      if (!confirm(`Tem certeza que deseja CONFIRMAR a reserva ${reservaId} e os números ${numeros.join(',')}?`)) {
+        return;
+      }
 
-    // 2) Marca números como pagos
-    await supabase
-      .from('numeros')
-      .update({ status: 'pago' })
-      .eq('reserva_id', reservaId);
+      try {
+        // 1. Atualiza status da reserva para 'confirmado'
+        await supabaseClient
+          .from('reservas')
+          .update({ status: 'confirmado' })
+          .eq('id', reservaId);
 
-    // 3) Insere no histórico (admin usa isso)
-    const inserts = r.numeros.map(n => ({
-      reserva_id: r.id,
-      numero: n,
-      nome_exibido: r.nome
-    }));
+        // 2. Atualiza status dos números para 'pago'
+        await supabaseClient
+          .from('numeros')
+          .update({ status: 'pago' })
+          .in('id', numeros);
 
-    await supabase.from('numeros_comprados').insert(inserts);
+        alert(`Reserva ${reservaId} confirmada com sucesso!`);
+        carregarDados(); // Recarrega a tabela
+      } catch (error) {
+        console.error('Erro ao confirmar reserva:', error);
+        alert('Erro ao confirmar reserva. Verifique o console.');
+      }
+    }
 
-    alert('✅ Confirmado!');
-    carregarPendentes();
-  };
+    window.cancelarReserva = async function(reservaId, numeros) {
+      if (!confirm(`Tem certeza que deseja CANCELAR a reserva ${reservaId} e liberar os números ${numeros.join(',')}?`)) {
+        return;
+      }
 
-  carregarPendentes();
-  setInterval(carregarPendentes, 8000);
-</script>
+      try {
+        // 1. Atualiza status da reserva para 'cancelada'
+        await supabaseClient
+          .from('reservas')
+          .update({ status: 'cancelada' })
+          .eq('id', reservaId);
 
+        // 2. Atualiza status dos números para 'livre' e remove reserva_id
+        await supabaseClient
+          .from('numeros')
+          .update({ status: 'livre', reserva_id: null })
+          .in('id', numeros);
+
+        // 3. Remove os nomes personalizados (opcional, mas limpa o BD)
+        await supabaseClient
+          .from('numeros_comprados')
+          .delete()
+          .eq('reserva_id', reservaId);
+
+        alert(`Reserva ${reservaId} cancelada e números liberados com sucesso!`);
+        carregarDados(); // Recarrega a tabela
+      } catch (error) {
+        console.error('Erro ao cancelar reserva:', error);
+        alert('Erro ao cancelar reserva. Verifique o console.');
+      }
+    }
+
+    // Carrega dados ao iniciar
+    carregarDados();
+
+    // Atualiza a cada 10 segundos
+    setInterval(carregarDados, 10000);
+  </script>
 </body>
 </html>
