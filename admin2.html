@@ -119,12 +119,57 @@
       }
 
       .admin-table-container {
-        padding: 1rem;
+        padding: 0; /* Remove padding do container para usar o padding do card */
+        box-shadow: none;
+        background: none;
       }
 
-      .admin-table th, .admin-table td {
-        padding: 0.75rem 0.5rem;
-        font-size: 0.875rem;
+      /* Transforma a tabela em lista */
+      .admin-table {
+        border: none;
+        width: 100%;
+      }
+
+      .admin-table thead {
+        display: none; /* Esconde o cabeçalho da tabela */
+      }
+
+      .admin-table tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid rgba(90, 90, 90, 0.1);
+        border-radius: 1rem;
+        background: var(--white);
+        padding: 1rem;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+      }
+
+      .admin-table td {
+        display: block;
+        text-align: right;
+        padding: 0.5rem 0;
+        border-bottom: none;
+        font-size: 1rem;
+      }
+
+      .admin-table td::before {
+        content: attr(data-label);
+        float: left;
+        font-weight: 600;
+        color: var(--text);
+      }
+
+      /* Ajuste para a coluna de Ações */
+      .admin-table td:last-child {
+        text-align: center;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(90, 90, 90, 0.1);
+      }
+
+      .btn-confirmar, .btn-cancelar {
+        width: 48%;
+        display: inline-block;
+        margin: 0.5rem 1%;
       }
     }
   </style>
@@ -222,12 +267,12 @@
 
         return `
           <tr>
-            <td style="font-weight: 600; color: var(--text);">${res.nome}</td>
-            <td style="color: var(--sage-medium);">${res.whatsapp || '-'}</td>
-            <td>${numerosHtml}</td>
-            <td style="font-size: 0.875rem; color: var(--text);">${nomesDetalhados}</td>
-            <td style="font-weight: 700; color: var(--coral-dark);">R$ ${total.toFixed(2)}</td>
-            <td>
+            <td data-label="Comprador" style="font-weight: 600; color: var(--text);">${res.nome}</td>
+            <td data-label="WhatsApp" style="color: var(--sage-medium);">${res.whatsapp || '-'}</td>
+            <td data-label="Números">${numerosHtml}</td>
+            <td data-label="Nomes" style="font-size: 0.875rem; color: var(--text);">${nomesDetalhados}</td>
+            <td data-label="Total" style="font-weight: 700; color: var(--coral-dark);">R$ ${total.toFixed(2)}</td>
+            <td data-label="Ações">
               <button class="btn-confirmar" onclick="confirmarReserva(${res.id}, [${res.numeros.join(',')}])">Confirmar</button>
               <button class="btn-cancelar" onclick="cancelarReserva(${res.id}, [${res.numeros.join(',')}])">Cancelar</button>
             </td>
