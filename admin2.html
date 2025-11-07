@@ -174,9 +174,19 @@
         // Associa números às reservas
         todasReservas = reservas.map((res) => {
           const comprados = numerosComprados ? numerosComprados.filter(n => n.reserva_id === res.id) : [];
+          
+          // Se não houver nomes personalizados, usa o array 'numeros' da reserva com o nome do comprador
+          let numerosExibidos = comprados;
+          if (numerosExibidos.length === 0 && res.numeros && res.numeros.length > 0) {
+            numerosExibidos = res.numeros.map(num => ({
+              numero: num,
+              nome_exibido: res.nome // Usa o nome do comprador como fallback
+            }));
+          }
+
           return {
             ...res,
-            numeros_exibidos: comprados
+            numeros_exibidos: numerosExibidos
           };
         });
 
@@ -202,6 +212,11 @@
         const nomesDetalhados = res.numeros_exibidos
           .map(n => `<div style="margin: 0.25rem 0;"><strong>${n.numero}:</strong> ${n.nome_exibido}</div>`)
           .join('');
+          
+        // Verifica se há números para exibir antes de calcular o total
+        if (res.numeros_exibidos.length === 0) {
+            return ''; // Não renderiza a linha se não houver números
+        }
 
         const total = res.numeros.length * 10; // Assumindo valor padrão de R$10,00
 
