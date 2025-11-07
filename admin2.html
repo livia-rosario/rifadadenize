@@ -7,359 +7,112 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="style.css">
-  <style>
-    /* Estilos específicos para o Admin, aproveitando as novas classes do style.css */
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: var(--background);
-      min-height: 100vh;
-      padding: 2rem;
-    }
-
-    .admin-container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .admin-h1 {
-      text-align: center;
-      color: var(--text);
-      font-size: 2.5rem;
-      margin-bottom: 2rem;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .admin-table-container {
-      background: var(--white);
-      padding: 2rem;
-      border-radius: 2rem;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-      overflow-x: auto;
-    }
-
-    .admin-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .admin-table th, .admin-table td {
-      padding: 1rem;
-      text-align: left;
-      border-bottom: 1px solid rgba(90, 90, 90, 0.1);
-    }
-
-    .admin-table th {
-      background: linear-gradient(90deg, var(--sage-medium) 0%, var(--sage-dark) 100%);
-      color: white;
-      font-weight: 600;
-      position: sticky;
-      top: 0;
-    }
-
-    .admin-table tr:hover {
-      background: var(--sage-light);
-    }
-
-    .numero-tag {
-      display: inline-block;
-      background: linear-gradient(135deg, var(--yellow) 0%, var(--yellow-dark) 100%);
-      color: var(--text);
-      padding: 0.25rem 0.75rem;
-      border-radius: 9999px;
-      font-weight: 600;
-      margin: 0.25rem;
-      font-size: 0.875rem;
-    }
-
-    .btn-confirmar {
-      background: linear-gradient(90deg, var(--green-light) 0%, var(--green-dark) 100%);
-      color: white;
-      padding: 0.5rem 1rem;
-      border: none;
-      border-radius: 9999px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    .btn-confirmar:hover {
-      transform: scale(1.05);
-    }
-
-    .btn-cancelar {
-      background: linear-gradient(90deg, var(--red-light) 0%, var(--red-dark) 100%);
-      color: white;
-      padding: 0.5rem 1rem;
-      border: none;
-      border-radius: 9999px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-      margin-left: 0.5rem;
-    }
-
-    .btn-cancelar:hover {
-      transform: scale(1.05);
-    }
-
-    .loading {
-      text-align: center;
-      padding: 3rem;
-      color: var(--sage-medium);
-      font-size: 1.25rem;
-    }
-
-    @media (max-width: 768px) {
-      body {
-        padding: 1rem;
-      }
-
-      .admin-h1 {
-        font-size: 1.75rem;
-      }
-
-      .admin-table-container {
-        padding: 0; /* Remove padding do container para usar o padding do card */
-        box-shadow: none;
-        background: none;
-      }
-
-      /* Transforma a tabela em lista */
-      .admin-table {
-        border: none;
-        width: 100%;
-      }
-
-      .admin-table thead {
-        display: none; /* Esconde o cabeçalho da tabela */
-      }
-
-      .admin-table tr {
-        display: block;
-        margin-bottom: 1rem;
-        border: 1px solid rgba(90, 90, 90, 0.1);
-        border-radius: 1rem;
-        background: var(--white);
-        padding: 1rem;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.05);
-      }
-
-      .admin-table td {
-        display: block;
-        text-align: right;
-        padding: 0.5rem 0;
-        border-bottom: none;
-        font-size: 1rem;
-      }
-
-      .admin-table td::before {
-        content: attr(data-label);
-        float: left;
-        font-weight: 600;
-        color: var(--text);
-      }
-
-      /* Ajuste para a coluna de Ações */
-      .admin-table td:last-child {
-        text-align: center;
-        padding-top: 1rem;
-        border-top: 1px solid rgba(90, 90, 90, 0.1);
-      }
-
-      .btn-confirmar, .btn-cancelar {
-        width: 48%;
-        display: inline-block;
-        margin: 0.5rem 1%;
-      }
-    }
-  </style>
 </head>
-<body>
-  <div class="admin-container">
-    <h1 class="admin-h1">✅ Confirmação Manual de Reservas</h1>
 
-    <div class="admin-table-container">
-      <h2 style="color: var(--text); margin-bottom: 1.5rem;">Reservas Aguardando Confirmação (Status: aguardando)</h2>
-      <div id="tabelaReservas" class="loading">Carregando dados...</div>
-    </div>
+<body style="font-family: 'Poppins', sans-serif; background: var(--background); padding: 2rem;">
+  <h1 class="admin-h1" style="text-align: center; margin-bottom: 2rem;">✅ Confirmação Manual de Reservas</h1>
+
+  <div class="admin-table-container" style="background: var(--white); padding: 2rem; border-radius: 1rem;">
+    <h2 style="margin-bottom: 1rem;">Reservas pendentes ou canceladas</h2>
+    <div id="tabelaReservas">Carregando...</div>
   </div>
 
-  <script type="module">
-    const supabaseUrl = 'https://kkxypfqqndnexpzpkgch.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtreHlwZnFxbmRuZXhwenBrZ2NoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5MDM3NDgsImV4cCI6MjA3NTQ3OTc0OH0.hpUzqjo2F022omCsXCx8f0NwOtGnE_zr46xNdhMGr34';
-    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+<script type="module">
+const supabaseUrl = 'https://kkxypfqqndnexpzpkgch.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtreHlwZnFxbmRuZXhwenBrZ2NoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5MDM3NDgsImV4cCI6MjA3NTQ3OTc0OH0.hpUzqjo2F022omCsXCx8f0NwOtGnE_zr46xNdhMGr34';
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-    let todasReservas = [];
+let todasReservas = [];
 
-    async function carregarDados() {
-      try {
-        // Carrega reservas que estão no status 'aguardando'
-        const { data: reservas, error: err1 } = await supabaseClient
-          .from('reservas')
-          .select('*')
-          .eq('status', 'aguardando')
-          .order('criado_em', { ascending: false });
+async function carregarDados() {
+  const { data: reservas, error } = await supabaseClient
+    .from('reservas')
+    .select('*')
+    .in('status', ['aguardando', 'cancelada'])  // ← MOSTRA CANCELADA TAMBÉM
+    .order('criado_em', { ascending: false });
 
-        if (err1) {
-          document.getElementById('tabelaReservas').innerHTML = '<p style="color: var(--red-dark);">Erro ao carregar reservas.</p>';
-          console.error(err1);
-          return;
-        }
+  if (error) {
+    document.getElementById('tabelaReservas').innerHTML = 'Erro ao carregar reservas.';
+    return;
+  }
 
-        // Carrega todos os números comprados para associar os nomes personalizados
-        const { data: numerosComprados, error: err2 } = await supabaseClient
-          .from('numeros_comprados')
-          .select('*')
-          .order('numero', { ascending: true });
+  // Se não houver
+  if (!reservas || reservas.length === 0) {
+    document.getElementById('tabelaReservas').innerHTML = '<p style="text-align:center;color:gray;">Nenhuma reserva pendente.</p>';
+    return;
+  }
 
-        if (err2) {
-          console.error('Erro ao obter numeros_comprados:', err2);
-        }
+  todasReservas = reservas;
+  renderizarTabela();
+}
 
-        // Associa números às reservas
-        todasReservas = reservas.map((res) => {
-          const comprados = numerosComprados ? numerosComprados.filter(n => n.reserva_id === res.id) : [];
-          
-          // Se não houver nomes personalizados, usa o array 'numeros' da reserva com o nome do comprador
-          let numerosExibidos = comprados;
-          if (numerosExibidos.length === 0 && res.numeros && res.numeros.length > 0) {
-            numerosExibidos = res.numeros.map(num => ({
-              numero: num,
-              nome_exibido: res.nome // Usa o nome do comprador como fallback
-            }));
-          }
+function renderizarTabela() {
+  const linha = todasReservas.map(res => {
+    const numeros = Array.isArray(res.numeros) ? res.numeros : JSON.parse(res.numeros);
+    const total = numeros.length * 10; // valor do número
 
-          return {
-            ...res,
-            numeros_exibidos: numerosExibidos
-          };
-        });
+    const botoesAcoes = res.status === 'aguardando'
+      ? `
+          <button class="btn-confirmar" style="margin-right: .5rem;"
+            onclick="confirmarReserva('${res.id}', ${JSON.stringify(numeros)})">Confirmar</button>
+          <button class="btn-cancelar"
+            onclick="cancelarReserva('${res.id}', ${JSON.stringify(numeros)})">Cancelar</button>
+        `
+      : `<span style="color: var(--red-dark); font-weight: 600;">Cancelada</span>`;
 
-        renderizarTabela();
-      } catch (error) {
-        console.error('Erro geral:', error);
-        document.getElementById('tabelaReservas').innerHTML = '<p style="color: var(--red-dark);">Erro ao carregar dados.</p>';
-      }
-    }
+    const classeLinha = res.status === 'cancelada' ? 'style="opacity:.6;"' : '';
 
-    function renderizarTabela() {
-      const tabelaReservasDiv = document.getElementById('tabelaReservas');
-      if (todasReservas.length === 0) {
-        tabelaReservasDiv.innerHTML = '<p style="color: var(--sage-medium); text-align: center;">Nenhuma reserva aguardando confirmação.</p>';
-        return;
-      }
+    return `
+      <tr ${classeLinha}>
+        <td>${res.nome}</td>
+        <td>${res.whatsapp || '-'}</td>
+        <td>${numeros.join(', ')}</td>
+        <td>R$ ${total.toFixed(2)}</td>
+        <td>${botoesAcoes}</td>
+      </tr>
+    `;
+  }).join('');
 
-      const linhas = todasReservas.map(res => {
-        const numerosHtml = res.numeros_exibidos
-          .map(n => `<span class="numero-tag" title="${n.nome_exibido}">${n.numero}</span>`)
-          .join(' ');
-        
-        const nomesDetalhados = res.numeros_exibidos
-          .map(n => `<div style="margin: 0.25rem 0;"><strong>${n.numero}:</strong> ${n.nome_exibido}</div>`)
-          .join('');
-          
-        // Verifica se há números para exibir antes de calcular o total
-        if (res.numeros_exibidos.length === 0) {
-            return ''; // Não renderiza a linha se não houver números
-        }
+  document.getElementById('tabelaReservas').innerHTML = `
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>WhatsApp</th>
+          <th>Números</th>
+          <th>Total</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>${linha}</tbody>
+    </table>
+  `;
+}
 
-        const total = res.numeros.length * 10; // Assumindo valor padrão de R$10,00
+window.confirmarReserva = async function(id, numeros) {
+  await supabaseClient.from('reservas').update({ status: 'confirmado' }).eq('id', id);
+  await supabaseClient.from('numeros').update({ status: 'pago' }).in('id', numeros);
 
-        return `
-          <tr>
-            <td data-label="Comprador" style="font-weight: 600; color: var(--text);">${res.nome}</td>
-            <td data-label="WhatsApp" style="color: var(--sage-medium);">${res.whatsapp || '-'}</td>
-            <td data-label="Números">${numerosHtml}</td>
-            <td data-label="Nomes" style="font-size: 0.875rem; color: var(--text);">${nomesDetalhados}</td>
-            <td data-label="Total" style="font-weight: 700; color: var(--coral-dark);">R$ ${total.toFixed(2)}</td>
-            <td data-label="Ações">
-              <button class="btn-confirmar" onclick="confirmarReserva(${res.id}, [${res.numeros.join(',')}])">Confirmar</button>
-              <button class="btn-cancelar" onclick="cancelarReserva(${res.id}, [${res.numeros.join(',')}])">Cancelar</button>
-            </td>
-          </tr>
-        `;
-      }).join('');
+  // grava para aparecer no painel admin
+  const { data: reserva } = await supabaseClient.from('reservas').select('nome').eq('id', id).single();
+  const inserts = numeros.map(n => ({ reserva_id: id, numero: n, nome_exibido: reserva.nome }));
 
-      tabelaReservasDiv.innerHTML = `
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>Comprador</th>
-              <th>WhatsApp</th>
-              <th>Números</th>
-              <th>Nomes personalizados</th>
-              <th>Total</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>${linhas}</tbody>
-        </table>
-      `;
-    }
+  await supabaseClient.from('numeros_comprados').insert(inserts, { ignoreDuplicates: true });
 
-    window.confirmarReserva = async function(reservaId, numeros) {
-      if (!confirm(`Tem certeza que deseja CONFIRMAR a reserva ${reservaId} e os números ${numeros.join(',')}?`)) {
-        return;
-      }
+  carregarDados();
+};
 
-      try {
-        // 1. Atualiza status da reserva para 'confirmado'
-        await supabaseClient
-          .from('reservas')
-          .update({ status: 'confirmado' })
-          .eq('id', reservaId);
+window.cancelarReserva = async function(id, numeros) {
+  await supabaseClient.from('reservas').update({ status: 'cancelada' }).eq('id', id);
+  await supabaseClient.from('numeros').update({ status: 'livre', reserva_id: null }).in('id', numeros);
+  await supabaseClient.from('numeros_comprados').delete().eq('reserva_id', id);
 
-        // 2. Atualiza status dos números para 'pago'
-        await supabaseClient
-          .from('numeros')
-          .update({ status: 'pago' })
-          .in('id', numeros);
+  carregarDados();
+};
 
-        alert(`Reserva ${reservaId} confirmada com sucesso!`);
-        carregarDados(); // Recarrega a tabela
-      } catch (error) {
-        console.error('Erro ao confirmar reserva:', error);
-        alert('Erro ao confirmar reserva. Verifique o console.');
-      }
-    }
+carregarDados();
+setInterval(carregarDados, 10000);
+</script>
 
-    window.cancelarReserva = async function(reservaId, numeros) {
-      if (!confirm(`Tem certeza que deseja CANCELAR a reserva ${reservaId} e liberar os números ${numeros.join(',')}?`)) {
-        return;
-      }
-
-      try {
-        // 1. Atualiza status da reserva para 'cancelada'
-        await supabaseClient
-          .from('reservas')
-          .update({ status: 'cancelada' })
-          .eq('id', reservaId);
-
-        // 2. Atualiza status dos números para 'livre' e remove reserva_id
-        await supabaseClient
-          .from('numeros')
-          .update({ status: 'livre', reserva_id: null })
-          .in('id', numeros);
-
-        // 3. Remove os nomes personalizados (opcional, mas limpa o BD)
-        await supabaseClient
-          .from('numeros_comprados')
-          .delete()
-          .eq('reserva_id', reservaId);
-
-        alert(`Reserva ${reservaId} cancelada e números liberados com sucesso!`);
-        carregarDados(); // Recarrega a tabela
-      } catch (error) {
-        console.error('Erro ao cancelar reserva:', error);
-        alert('Erro ao cancelar reserva. Verifique o console.');
-      }
-    }
-
-    // Carrega dados ao iniciar
-    carregarDados();
-
-    // Atualiza a cada 10 segundos
-    setInterval(carregarDados, 10000);
-  </script>
 </body>
 </html>
